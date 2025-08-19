@@ -1,12 +1,12 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import DisplayBox from './components/display-box';
+import DownloadsList from './components/downloads-list';
 
 const App: React.FC = () => {
   return (
     <div>
       <h1>Downloads Organizer</h1>
-      <DisplayBox text="Welcome to the Downloads Organizer!" />
+      <DownloadsList />
     </div>
   );
 };
