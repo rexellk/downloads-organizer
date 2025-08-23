@@ -1,30 +1,32 @@
-import anthropic
-import os
+"""Anthropic API integration for file deletion recommendations."""
 import json
+import os
+from typing import List
+
+import anthropic
 from dotenv import load_dotenv
 
 load_dotenv()
 
-client = anthropic.Anthropic(
+anthropic_client = anthropic.Anthropic(
     api_key=os.environ.get("ANTHROPIC_API_KEY")
 )
 
-# message = client.messages.create(
-#     model="claude-sonnet-4-20250514",
-#     max_tokens=1000,
-#     messages=[
-#         {
-#             "role": "user", 
-#             "content": "What should I search for to find the latest developments in renewable energy?"
-#         }
-#     ]
-# )
 
-# print(message.content)
-
-def prompt_deletion_candidates(filenames):
-    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+def prompt_deletion_candidates(filenames: List[str]) -> List[str]:
+    """
+    Use Anthropic API to suggest which files are safe to delete.
     
+    Args:
+        filenames: List of filenames to analyze
+        
+    Returns:
+        List of filenames that are safe to delete
+    """
+    local_client = anthropic.Anthropic(
+        api_key=os.environ.get("ANTHROPIC_API_KEY")
+    )
+
     prompt = f"""Look at these filenames and tell me which ones are safe to delete:
 
 {json.dumps(filenames)}
@@ -37,43 +39,32 @@ Respond with ONLY this JSON format:
 Nothing else. Just the JSON."""
 
     try:
-        response = client.messages.create(
+        response = local_client.messages.create(
             model="claude-sonnet-4-20250514",
             max_tokens=500,
             messages=[{"role": "user", "content": prompt}]
         )
-        
+
         # Extract text from the first text block in content
         text_content = None
         for block in response.content:
             if block.type == "text":
                 text_content = block.text
                 break
-        
+
         if not text_content:
             print("Error: No text content found in response")
             return []
-            
+
         result = json.loads(text_content.strip())
         return result["safe_to_delete"]
-        
-    except json.JSONDecodeError as e:
-        print(f"Error parsing JSON: {e}")
+
+    except json.JSONDecodeError as json_error:
+        print(f"Error parsing JSON: {json_error}")
         return []
-    except Exception as e:
-        print(f"Error: {e}")
+    except anthropic.APIError as api_error:
+        print(f"Anthropic API error: {api_error}")
         return []
-    
-
-
-# files = [
-#     "temp_file_001.tmp",
-#     "cache_data.cache",
-#     "system_backup.bak",
-#     "error_report.log",
-#     "browser_temp.tmp"
-#     "FAMILY_PICS.jpg"
-# ]
-
-# result = get_deletion_candidates(files)
-# print(result)
+    except Exception as general_error:
+        print(f"Error: {general_error}")
+        return []
