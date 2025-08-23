@@ -13,3 +13,31 @@ export const fetchFiles = async (): Promise<FetchDownloadsResponse> => {
   console.log('API response:', data);
   return data;
 };
+
+export const fetchCandidates = async (): Promise<FetchDownloadsResponse> => {
+  console.log('Fetching from:', `${API_BASE}/api/files/suggestions/cleanup`);
+  const response = await fetch(`${API_BASE}/api/files/suggestions/cleanup`);
+  console.log('Response status:', response.status);
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = await response.json();
+  console.log('API response:', data);
+  return data;
+};
+
+export const trashCandidates = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_BASE}/api/files/suggestions/cleanup/trash`, {
+      method: 'POST',
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    await response.json();
+    return true;
+  } catch (error) {
+    console.error('Error trashing candidates:', error);
+    return false;
+  }
+};

@@ -34,3 +34,4 @@ async def move_file(file_names, target_folder: str):
 @router.post("/files/move_all")
 async def move_all_files(target_folder: str):
     return move_all_files_operation(target_folder)
+

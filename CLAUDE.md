@@ -61,24 +61,37 @@ app/
 ### Frontend Structure (`frontend/src/`)
 ```
 src/
-├── main.tsx                   # React app entry point
+├── main.tsx                   # React app entry point with black background layout
 ├── components/
-│   └── downloads-list.tsx     # Main file display component
+│   ├── file-info-card.tsx     # File listing card with API integration
+│   ├── anthropic-info-card.tsx # Deletion suggestions card
+│   ├── delete-button.tsx      # Red dangerous action button
+│   ├── trash-button.tsx       # Yellow-orange caution button
+│   └── ui/                    # Radix UI + shadcn/ui components
 ├── services/api/
-│   └── api.ts                # Backend API client
-└── types/
-    └── api.ts                # TypeScript interfaces
+│   └── api.ts                # Backend API client with fetchFiles and fetchCandidates
+├── types/
+│   └── api.ts                # TypeScript interfaces for API responses
+└── lib/
+    └── utils.ts              # Utility functions (tailwind-merge, clsx)
 ```
 
 ### API Endpoints
 - `GET /`: Health check ("Downloads Organizer API is running!")
 - `GET /api/files`: Returns file metadata with schema containing files array, total_count, and message
+- `GET /api/files/suggestions/cleanup`: Uses Anthropic API to suggest files safe for deletion
+- `POST /api/files/suggestions/cleanup/trash`: Moves suggested files to trash
+- `POST /api/files/move`: Moves specified files to target folder
+- `POST /api/files/move_all`: Moves all files to target folder
 - Interactive API docs available at `http://localhost:8000/docs`
 
 ### Key Components
 - **File Scanner**: Extracts metadata including name, size_mb, extension, age_days, and created timestamp
+- **Anthropic Integration**: Uses Claude API to intelligently suggest files safe for deletion (requires ANTHROPIC_API_KEY)
+- **Component Architecture**: Standalone card components with motion animations and loading states
+- **UI System**: Built on Radix UI primitives with Tailwind CSS v4 and shadcn/ui components
 - **CORS Configuration**: Supports both `http://localhost:3000` and `http://localhost:5174` (Vite default)
-- **Error Handling**: Comprehensive error handling for file access issues
+- **Error Handling**: Comprehensive error handling for file access and API issues
 - **Settings Management**: Environment-based configuration with `.env` file support
 
 ## Development Notes
@@ -88,3 +101,7 @@ src/
 - Frontend uses Vite's default port (5174) for development
 - The application scans the user's Downloads folder using `Path.home() / "Downloads"`
 - Virtual environment is pre-configured in `backend/venv/`
+- Frontend components use Motion/Framer Motion for animations and hover effects
+- API responses are cached globally (deletion_candidates) for trash operations
+- Environment variable `VITE_API_BASE_URL` can override default backend URL
+- Component styling follows glassmorphism design with backdrop-blur effects

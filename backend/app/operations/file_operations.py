@@ -93,3 +93,4 @@ def move_all_files_operation(target_folder: str) -> Dict[str, Union[str, List[st
                 print(f"Error moving {file_path}: {e}")
     
     return {"status": "success", "message": f"Moved {len(moved_files)} files to {target_folder}.", "files": moved_files}
+
