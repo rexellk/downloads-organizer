@@ -22,7 +22,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Run development server with hot reload
-python run.py  # Runs on http://0.0.0.0:8000
+python run.py  # Runs on http://localhost:8000
+
+# Linting and code quality
+pylint app/  # Run linter on app directory only (ignores venv/)
 
 # Install new dependencies
 pip install <package_name>
@@ -83,6 +86,7 @@ src/
 - `POST /api/files/suggestions/cleanup/trash`: Moves suggested files to trash
 - `POST /api/files/move`: Moves specified files to target folder
 - `POST /api/files/move_all`: Moves all files to target folder
+- `DELETE /api/files/suggestions/cleanup/delete`: Permanently deletes files from trash
 - Interactive API docs available at `http://localhost:8000/docs`
 
 ### Key Components
@@ -102,6 +106,15 @@ src/
 - The application scans the user's Downloads folder using `Path.home() / "Downloads"`
 - Virtual environment is pre-configured in `backend/venv/`
 - Frontend components use Motion/Framer Motion for animations and hover effects
-- API responses are cached globally (deletion_candidates) for trash operations
+- API responses are cached globally (DELETION_CANDIDATES) for trash operations
 - Environment variable `VITE_API_BASE_URL` can override default backend URL
 - Component styling follows glassmorphism design with backdrop-blur effects
+
+## Code Quality and Linting
+
+- Backend follows strict linting standards with pylint (module docstrings, function docstrings, proper imports)
+- Frontend uses ESLint with TypeScript for code quality
+- Import order: standard library imports before third-party imports
+- ES modules used throughout frontend (requires `__dirname` workarounds in config files)
+- All functions require proper type annotations and docstrings
+- Global variables use UPPER_CASE naming convention
