@@ -3,6 +3,7 @@ from app.operations.file_operations import scan_downloads_operation
 from app.operations.file_operations import move_file_operation
 from app.operations.file_operations import move_all_files_operation
 from app.operations.anthropic_sort import prompt_deletion_candidates
+from app.operations.file_operations import delete_files_bin
 from app.models.files import FilesResponse
 
 deletion_candidates = None
@@ -23,7 +24,7 @@ async def get_cleanup_suggestions():
 
 @router.post("/files/suggestions/cleanup/trash")
 async def trash_candidates():
-    if (deletion_candidates == ""):
+    if (deletion_candidates == "" or "[]"):
         return "Please get AI Suggestions First before trashing"
     return move_file_operation(deletion_candidates, "~/.Trash")
 
@@ -34,4 +35,8 @@ async def move_file(file_names, target_folder: str):
 @router.post("/files/move_all")
 async def move_all_files(target_folder: str):
     return move_all_files_operation(target_folder)
+
+@router.delete("/files/suggestions/cleanup/delete")
+async def delete_candidates():
+    return delete_files_bin()
 

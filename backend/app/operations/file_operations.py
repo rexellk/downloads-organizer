@@ -94,3 +94,26 @@ def move_all_files_operation(target_folder: str) -> Dict[str, Union[str, List[st
     
     return {"status": "success", "message": f"Moved {len(moved_files)} files to {target_folder}.", "files": moved_files}
 
+def delete_files_bin(file_names=None):
+    bin_path = Path.home() / ".Trash"
+    deleted_files = []
+    
+    if not bin_path.exists():
+        return {"status": "error", "message": "Trash folder not found"}
+    
+    try:
+        files_to_delete = list(bin_path.iterdir()) if file_names is None else [bin_path / name for name in file_names]
+    except PermissionError:
+        return {"status": "error", "message": "Permission denied: Cannot access trash folder"}
+    
+    for file_path in files_to_delete:
+        if file_path.is_file() and file_path.exists():
+            try:
+                file_path.unlink()
+                deleted_files.append(file_path.name)
+            except PermissionError:
+                print(f"Permission denied deleting {file_path}")
+            except Exception as e:
+                print(f"Error deleting {file_path}: {e}")
+    
+    return {"status": "success", "message": f"Permanently deleted {len(deleted_files)} files", "files": deleted_files}

@@ -32,8 +32,8 @@ const App: React.FC = () => {
           </div>
         )}
         <div className="flex justify-center items-center">
-          <TrashButton className="px-12" text="Trash Suggestions" onClick={handleTrashClick}/>
-          <DeleteButton className="px-12" text="Delete Suggestions"/>
+          <TrashButton className="px-12" text="Move to Trash" onClick={handleTrashClick}/>
+          {/* <DeleteButton className="px-12" text="Delete Suggestions"/> */}
         </div>
       </div>
     </div>
