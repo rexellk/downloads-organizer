@@ -1,0 +1,1 @@
+Just go to the root folder and run 'npm run dev' and go to the link 'http://localhost:5173/'
